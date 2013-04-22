@@ -12,10 +12,9 @@
 #define __RASPBERRY_DRIVER_IO_EXPANDER_MCP23X17_H__ 1
 
 #include <Wire.h>
-#include <Raspberry.h>
 #include <IOExpander.h>
-
-#define Wire                                    Wire0
+#include <stdio.h>
+#include <stdlib.h>
 
 #define IO_EX_MAX_PINS                          16
 
@@ -28,14 +27,18 @@
 #define IO_EXP_PIN_TO_IPOL_REG(p)               ((p) < 8 ? IPOLA : IPOLB)
 #define IO_EXP_PIN_TO_GPINTEN_REG(p)            ((p) < 8 ? GPINTENA : GPINTENB)
 
-class IOExpanderMCP23X17 {
+class IOExpanderMCP23X17 : public IOExpander {
 
     /**
      * I2C device address.
      */
     unsigned char device;
 
+    Wire *wire;
+
 public:
+
+    IOExpanderMCP23X17(Wire *wire);
 
     enum SequentialOperationMode {
         SEQUENTIAL_MODE_ENABLE = 0x00, SEQUENTIAL_MODE_DISABLE = 0xff,

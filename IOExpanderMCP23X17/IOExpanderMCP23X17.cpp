@@ -13,9 +13,13 @@
 
 #include "IOExpanderMCP23X17.h"
 
+IOExpanderMCP23X17::IOExpanderMCP23X17(Wire *wire) : wire(wire) {
+	device = 0x20;
+}
+
 void IOExpanderMCP23X17::begin(unsigned char device) {
-    this->device = 0x20 | (device & 0x07);
-    Wire.begin(device);
+    this->device |= device & 0x07;
+    wire->begin();
 }
 
 void IOExpanderMCP23X17::pinMode(unsigned char pin, bool mode) {
@@ -47,19 +51,25 @@ void IOExpanderMCP23X17::configureRegisterBits(Register reg, unsigned char mask,
 }
 
 void IOExpanderMCP23X17::writeRegister(Register reg, unsigned char v) {
-    Wire.beginTransmission(device);
-    Wire.write((unsigned char) reg);
-    Wire.write(v);
-    Wire.endTransmission();
+	unsigned char buf[2] = {(unsigned char) reg, v};
+	wire->beginTransmission(device);
+    if (wire->write((const unsigned char*) buf, 2) != 2) {
+    	perror("Write failed.");
+    	exit(1);
+    }
+    wire->endTransmission();
 }
 
 unsigned char IOExpanderMCP23X17::readRegister(Register reg) {
-    Wire.beginTransmission(device);
-    Wire.write((unsigned char) reg);
-    Wire.endTransmission(false);
-    Wire.requestFrom(device, (unsigned char) 1);
-    while (!Wire.available());
-    return Wire.read();
+    wire->beginTransmission(device);
+    if (wire->write((unsigned char) reg) != 1) {
+    	perror("Write failed.");
+		exit(1);
+	}
+    wire->endTransmission();
+    wire->requestFrom(device, (unsigned char) 1);
+    while(!wire->available());
+    return wire->read();
 }
 
 void IOExpanderMCP23X17::setPinPullUp(unsigned char pin, bool pullUp) {
