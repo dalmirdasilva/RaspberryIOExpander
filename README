@@ -1,9 +1,9 @@
-Arduino IO Expander Driver
+Raspberry IO Expander Driver
 ================
 
-Arduino IO Expander Driver is a library for Arduino(http://www.arduino.cc/). 
+Raspberry IO Expander Driver is a library for Raspberry. 
 It is developed in C++.
 
 You can find the documentation in
 
-	http://www.itisopensource.com/arduino/driver/io_expander/doc/html/
+	http://www.itisopensource.com/raspberry/driver/io_expander/doc/html/
